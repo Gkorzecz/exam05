@@ -15,10 +15,8 @@ class	bigint
         bigint &operator=(const bigint &other);
 		~bigint();
 
-	//getValue
 		std::string	 getvalue() const;
 
-	//operators
 		bigint operator+(const bigint& other) const;
 		bigint operator+=(const bigint& other);
 		bigint operator++(int);

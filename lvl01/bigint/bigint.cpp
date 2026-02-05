@@ -27,12 +27,12 @@ bigint::~bigint()
 {}
 
 
-std::string		bigint::getvalue() const
+std::string	 bigint::getvalue() const
 {
 	return (this->_string);
 }
 
-bigint	bigint::operator+(const bigint& other) const
+bigint bigint::operator+(const bigint& other) const
 {
     bigint copy(*this);
     std::string ss1 = this->_string;
@@ -65,10 +65,10 @@ bigint	bigint::operator+(const bigint& other) const
         j--;
     }
     copy._string = result;
-    return copy;
+    return (copy);
 }
 
-bigint	bigint::operator+=(const bigint& other)
+bigint bigint::operator+=(const bigint& other)
 {
 	*this = *this + other;
 	return (*this);
@@ -83,10 +83,9 @@ bigint	bigint::operator++(int)
 	return (copy);
 }
 
-bigint	&bigint::operator++(void)
+bigint &bigint::operator++(void)
 {
 	bigint	copy(1);
-
 	*this += copy;
 	return (*this);
 }
@@ -94,15 +93,14 @@ bigint	&bigint::operator++(void)
 bigint	bigint::operator<<(unsigned int shift) const
 {
 	bigint	copy(*this);
-
+    
 	if (copy._string == "0")
-		return (copy);
-	
+		return (copy);	
 	copy._string.append(shift, '0');
 	return(copy);
 }
 
-bigint	bigint::operator<<=(unsigned int shift)
+bigint bigint::operator<<=(unsigned int shift)
 {
 	if (this->_string == "0")
 		return (*this);
@@ -111,7 +109,7 @@ bigint	bigint::operator<<=(unsigned int shift)
 	return(*this);
 }
 
-bigint	bigint::operator>>=(const bigint& other)
+bigint bigint::operator>>=(const bigint& other)
 {
 	if (this->_string == "0")
 		return (*this);
@@ -131,7 +129,7 @@ bigint	bigint::operator>>=(const bigint& other)
 	return(*this);
 }
 
-bool	bigint::operator>(const bigint& other)
+bool bigint::operator>(const bigint& other)
 {
 	if (this->_string.size() > other._string.size())
 		return (true);
@@ -154,7 +152,7 @@ bool	bigint::operator>(const bigint& other)
 	return (false);
 }
 
-bool	bigint::operator<(const bigint& other)
+bool bigint::operator<(const bigint& other)
 {
 	if (this->_string.size() < other._string.size())
 		return (true);
@@ -177,21 +175,21 @@ bool	bigint::operator<(const bigint& other)
 	return (false);
 }
 
-bool	bigint::operator==(const bigint& other)
+bool bigint::operator==(const bigint& other)
 {
 	if (this->_string == other._string)
 		return (true);
 	return (false);
 }
 
-bool	bigint::operator!=(const bigint& other)
+bool bigint::operator!=(const bigint& other)
 {
 	if (this->_string != other._string)
 		return (true);
 	return (false);
 }
 
-bool	bigint::operator<=(const bigint& other)
+bool bigint::operator<=(const bigint& other)
 {
 	if (this->_string == other._string)
 		return (true);
@@ -200,7 +198,7 @@ bool	bigint::operator<=(const bigint& other)
 	return (false);
 }
 
-bool	bigint::operator>=(const bigint& other)
+bool bigint::operator>=(const bigint& other)
 {
 	if (this->_string == other._string)
 		return (true);
@@ -209,8 +207,7 @@ bool	bigint::operator>=(const bigint& other)
 	return (false);
 }
 
-//outside class
-std::ostream&	operator<<(std::ostream& out, const bigint& other)
+std::ostream &operator<<(std::ostream& out, const bigint& other)
 {
 	out << other.getvalue();
 	return (out);
