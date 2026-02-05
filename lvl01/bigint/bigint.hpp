@@ -1,35 +1,39 @@
+#pragma once
+
 #include <string>
 #include <iostream>
 #include <ostream>
-#include <sstream>// memorise this for exam**
+#include <sstream>
 
-class	bigint
+class bigint
 {
 	private:
-		std::string	_string;
-
+		std::string _string;
+	
 	public:
 		bigint();
-		bigint(unsigned int n);
-		bigint(const bigint& original);
-        bigint &operator=(const bigint &other);
+		bigint(unsigned int num);
+		bigint(const bigint &other);
+		bigint &operator=(const bigint &other);
 		~bigint();
 
-		std::string	 getvalue() const;
-
-		bigint operator+(const bigint& other) const;
-		bigint operator+=(const bigint& other);
+		bigint operator+(const bigint &other) const;
+		bigint &operator+=(const bigint &other);
 		bigint operator++(int);
-		bigint &operator++(void);
-		bigint operator<<(unsigned int value) const;
-		bigint operator<<=(unsigned int value);
-		bigint operator>>=(const bigint& other);
-		bool operator>(const bigint& other);
-		bool operator<(const bigint& other);
-		bool operator==(const bigint& other);
-		bool operator!=(const bigint& other);
-		bool operator<=(const bigint& other);
-		bool operator>=(const bigint& other);
+		bigint &operator++();
+		bool operator>(const bigint &other) const;
+		bool operator<(const bigint &other) const;
+		bool operator==(const bigint &other) const;
+		bool operator!=(const bigint &other) const;
+		bool operator>=(const bigint &other) const;
+		bool operator<=(const bigint &other) const;
+
+		bigint operator<<(unsigned int shift) const;
+		bigint &operator<<=(unsigned int shift);
+		bigint &operator>>=(const bigint& other);
+
+		std::string getString() const;
+	
 };
 
-std::ostream& operator<<(std::ostream& out, const bigint& other);
+std::ostream &operator<<(std::ostream &out, const bigint &obj);
