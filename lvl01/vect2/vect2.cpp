@@ -37,32 +37,32 @@ int vect2::getY(void) const
     return (_y);
 }
 
-// int &vect2::operator[](int index)
-// {
-//     if (index == 0)
-//         return (_x);
-//     return (_y);
-// }
-
-// const int &vect2::operator[](int index) const
-// {
-//     if (index == 0)
-//         return (_x);
-//     return (_y);
-// }
-
-
 int &vect2::operator[](int index)
 {
-    assert(index == 0 || index == 1);
-    return (index == 0 ? _x : _y);
+    if (index == 0)
+        return (_x);
+    return (_y);
 }
 
 const int &vect2::operator[](int index) const
 {
-    assert(index == 0 || index == 1);
-    return (index == 0 ? _x : _y);
+    if (index == 0)
+        return (_x);
+    return (_y);
 }
+
+
+// int &vect2::operator[](int index)
+// {
+//     assert(index == 0 || index == 1);
+//     return (index == 0 ? _x : _y);
+// }
+
+// const int &vect2::operator[](int index) const
+// {
+//     assert(index == 0 || index == 1);
+//     return (index == 0 ? _x : _y);
+// }
 
 vect2 &vect2::operator++()
 {
@@ -137,13 +137,6 @@ vect2 &vect2::operator-=(const vect2 &other)
     return (*this);
 }
 
-vect2 &vect2::operator*=(const vect2 &other)
-{
-    _x *= other._x;
-    _y *= other._y;
-    return (*this);
-}
-
 vect2 vect2::operator+(int value) const
 {
     vect2 tmp(*this);
@@ -176,13 +169,6 @@ vect2 vect2::operator-(const vect2 &other) const
 {
     vect2 tmp(*this);
     tmp -= other;
-    return (tmp);
-}
-
-vect2 vect2::operator*(const vect2 &other) const
-{
-    vect2 tmp(*this);
-    tmp *= other;
     return (tmp);
 }
 

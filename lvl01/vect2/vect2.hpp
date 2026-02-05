@@ -31,7 +31,6 @@ public:
 
     vect2 &operator+=(const vect2 &other);
     vect2 &operator-=(const vect2 &other);
-    vect2 &operator*=(const vect2 &other);
 
     vect2 operator+(int value) const;
     vect2 operator-(int value) const;
@@ -39,7 +38,6 @@ public:
 
     vect2 operator+(const vect2 &other) const;
     vect2 operator-(const vect2 &other) const;
-    vect2 operator*(const vect2 &other) const;
 
     vect2 operator-(void) const;
 

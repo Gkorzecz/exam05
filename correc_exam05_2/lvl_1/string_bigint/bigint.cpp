@@ -200,36 +200,6 @@ bool	bigint::operator>=(const bigint& other)
 	return (false);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //outside class
 std::ostream&	operator<<(std::ostream& out, const bigint& other)
 {

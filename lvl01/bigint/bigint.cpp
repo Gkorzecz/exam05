@@ -1,122 +1,217 @@
 #include "bigint.hpp"
 
-#include <algorithm>
-#include <cctype>
-
-bigint::bigint() : num("0")
+bigint::bigint() : _string("0")
 {}
 
-bigint::bigint(size_t n) : num(std::to_string(n))
-{}
-
-bigint::bigint(const bigint& oth) : num(oth.num)
-{}
-
-bigint::bigint(const std::string& n)
+bigint::bigint(unsigned int n)
 {
-    if (n.empty() || !std::all_of(n.begin(), n.end(), [](unsigned char c){ return std::isdigit(c); }) || (n.size() > 1 && n[0] == '0'))
-        num = "0";
-    else
-        num = n;
+	std::ostringstream oss;
+	oss << n;
+
+	this->_string = oss.str();
 }
 
-std::ostream& operator<<(std::ostream& os, const bigint& b)
+bigint::bigint(const bigint& original)
 {
-    return (os << b.num);
+	*this = original;
 }
 
-std::string bigint::add_strings(const std::string& n1, const std::string& n2) const
+bigint &bigint::operator=(const bigint &other)
 {
+    if (this != &other)
+        this->_string = other._string;
+    return (*this);
+}
+
+bigint::~bigint()
+{}
+
+
+std::string		bigint::getvalue() const
+{
+	return (this->_string);
+}
+
+bigint	bigint::operator+(const bigint& other) const
+{
+    bigint copy(*this);
+    std::string ss1 = this->_string;
+    std::string ss2 = other._string;
+
+    if (ss2.size() > ss1.size())
+        std::swap(ss1, ss2);
+
     std::string result;
+    int i = ss1.length() - 1;
+    int j = ss2.length() - 1;
     int carry = 0;
-    int i = static_cast<int>(n1.size()) - 1;
-    int j = static_cast<int>(n2.size()) - 1;
 
     while (i >= 0 || j >= 0 || carry)
     {
-        int sum = carry;
+        int digit1 = 0;
+        int digit2 = 0;
+
         if (i >= 0)
-            sum += n1[i--] - '0';
+            digit1 = ss1[i] - '0';
         if (j >= 0)
-            sum += n2[j--] - '0';
+            digit2 = ss2[j] - '0';
 
-        result.push_back(char(sum % 10 + '0'));
+        int sum = digit1 + digit2 + carry;
+
+        result.insert(result.begin(), (sum % 10) + '0');
         carry = sum / 10;
-    }
 
-    std::reverse(result.begin(), result.end());
-    return (result);
+        i--;
+        j--;
+    }
+    copy._string = result;
+    return copy;
 }
 
-bigint bigint::operator+(const bigint& oth) const
+bigint	bigint::operator+=(const bigint& other)
 {
-    return bigint(add_strings(num, oth.num));
+	*this = *this + other;
+	return (*this);
 }
 
-bigint& bigint::operator+=(const bigint& oth) {
-    num = add_strings(num, oth.num);
-    return *this;
+bigint	bigint::operator++(int)
+{
+	bigint	copy(*this);
+	bigint	copy2(1);
+
+	*this += copy2;
+	return (copy);
 }
 
-bigint& bigint::operator++() {
-    return *this += bigint(1);
+bigint	&bigint::operator++(void)
+{
+	bigint	copy(1);
+
+	*this += copy;
+	return (*this);
 }
 
-bigint bigint::operator++(int) {
-    bigint tmp(*this);
-    ++(*this);
-    return tmp;
+bigint	bigint::operator<<(unsigned int shift) const
+{
+	bigint	copy(*this);
+
+	if (copy._string == "0")
+		return (copy);
+	
+	copy._string.append(shift, '0');
+	return(copy);
 }
 
-bigint bigint::operator<<(size_t shift) const {
-    return bigint(num + std::string(shift, '0'));
+bigint	bigint::operator<<=(unsigned int shift)
+{
+	if (this->_string == "0")
+		return (*this);
+	
+	this->_string.append(shift, '0');
+	return(*this);
 }
 
-bigint& bigint::operator<<=(size_t shift) {
-    num += std::string(shift, '0');
-    return *this;
+bigint	bigint::operator>>=(const bigint& other)
+{
+	if (this->_string == "0")
+		return (*this);
+
+	std::stringstream oss;
+	oss << other;
+	size_t shift = 0;
+	oss >> shift;
+
+	if (this->_string.size() > shift)
+		this->_string.erase(this->_string.begin() + (this->_string.size() - shift), this->_string.end());
+	else
+	{
+		this->_string.clear();
+		this->_string.push_back('0');
+	}
+	return(*this);
 }
 
-bigint& bigint::operator>>=(const bigint& b) {
-    if (bigint(num.size()) <= b)
-        num = "0";
-    else {
-        bigint i(0);
-        while (i < b) {
-            num.pop_back();
-            ++i;
-        }
-    }
-    return *this;
+bool	bigint::operator>(const bigint& other)
+{
+	if (this->_string.size() > other._string.size())
+		return (true);
+	if (this->_string.size() < other._string.size())
+		return (false);
+
+	std::string		x1 = this->_string;
+	std::string		x2 = this->_string;
+
+	for (size_t i = 0; i < x1.size(); i++)
+	{
+		if (x1[i] != x2[i])
+		{
+			if (x1[i] > x2[i])
+				return (true);
+			else
+				return (false);
+		}
+	}
+	return (false);
 }
 
-bool bigint::operator<(const bigint& oth) const {
-    if (num.size() != oth.num.size())
-        return num.size() < oth.num.size();
-    return num < oth.num;
+bool	bigint::operator<(const bigint& other)
+{
+	if (this->_string.size() < other._string.size())
+		return (true);
+	if (this->_string.size() > other._string.size())
+		return (false);
+
+	std::string		x1 = this->_string;
+	std::string		x2 = this->_string;
+
+	for (size_t i = 0; i < x1.size(); i++)
+	{
+		if (x1[i] != x2[i])
+		{
+			if (x1[i] < x2[i])
+				return (true);
+			else
+				return (false);
+		}
+	}
+	return (false);
 }
 
-bool bigint::operator>(const bigint& oth) const {
-    return oth < *this;
+bool	bigint::operator==(const bigint& other)
+{
+	if (this->_string == other._string)
+		return (true);
+	return (false);
 }
 
-bool bigint::operator<=(const bigint& oth) const {
-    return !(*this > oth);
+bool	bigint::operator!=(const bigint& other)
+{
+	if (this->_string != other._string)
+		return (true);
+	return (false);
 }
 
-bool bigint::operator>=(const bigint& oth) const {
-    return !(*this < oth);
+bool	bigint::operator<=(const bigint& other)
+{
+	if (this->_string == other._string)
+		return (true);
+	if (*this < other)
+		return (true);
+	return (false);
 }
 
-bool bigint::operator==(const bigint& oth) const {
-    return num == oth.num;
+bool	bigint::operator>=(const bigint& other)
+{
+	if (this->_string == other._string)
+		return (true);
+	if (*this > other)
+		return (true);
+	return (false);
 }
 
-bool bigint::operator!=(const bigint& oth) const {
-    return num != oth.num;
-}
-
-bigint bigint::operator-(const bigint& oth) const {
-    (void)oth;
-    return bigint();
+//outside class
+std::ostream&	operator<<(std::ostream& out, const bigint& other)
+{
+	out << other.getvalue();
+	return (out);
 }
