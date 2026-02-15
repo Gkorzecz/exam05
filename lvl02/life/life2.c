@@ -1,7 +1,5 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "life.h"
+
 
 void free_board(char **board, int height)
 {
@@ -71,12 +69,12 @@ char **add_livingcells(int width, int height)
 
 char** update_board(char **board, int width, int height)
 {
-    char** updated_board = board_creation(int width, int height)
+    char** updated_board = board_creation(width, height);
     if (!updated_board)
         return(NULL);
     for (int y = 0; y < height; y++)
     {
-        for (int y = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
         {
             int n = 0;
             for (int dy = -1; dy <= 1; dy++)
@@ -111,59 +109,12 @@ char** update_board(char **board, int width, int height)
     return(updated_board);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// void free_board(char **board, int height)
-// {
-//     int array = 0;
-//     while (array < height)
-//     {
-//         free(board[array]);
-//         array++;
-//     }
-// 	free(board);
-// }
-
-// void print_board(char **board, int height, int width)
-// {
-//     int array = 0;
-//     int index = 0;
-
-//     while (array < height)
-//     {
-//         index = 0;
-//         while (index < width)
-//         {
-//             putchar(board[array][index]);
-//             index++
-//         }
-//         putchar('\n');
-//         array++
-//     }
-// }
-
+void game_of_life(int width, int height, int iteration)
+{
+    char **new_board;
+    new_board = add_livingcells(width, height);
+    while (iteration--)
+        update_board(new_board, width, height);
+    print_board(new_board, width, height);
+    free_board(new_board, height);
+}
