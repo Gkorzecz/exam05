@@ -8,7 +8,8 @@ public:
     Set(SearchableBag* bag) : bag(bag) {}
     Set(const Set& other) : bag(other.bag) {}
     virtual ~Set() {}
-    Set& operator=(const Set& other) {
+    Set& operator=(const Set& other)
+    {
         if (this != &other) bag = other.bag;
         return *this;
     }
