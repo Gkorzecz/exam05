@@ -1,120 +1,140 @@
 #include "life.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-
-void free_board(char **board, int height)
+void	free_board(char **board, int height)
 {
-    int array = 0;
-    while (array < height)
-    {
-        free(board[array]);
-        array++;
-    }
-    free(board);
+	if (!board)
+		return;
+	for (int i = 0; i < height; i++)
+		free(board[i]);
+	free(board);
 }
 
-void print_board(char **board, int width, int height)
+void	print_board(char **board, int width, int height)
 {
-    for(int i = 0; i < height; i++)
-    {
-        for(int j = 0; j < width; j++)
-            putchar(board[i][j]);
-        putchar('\n');
-    }
+	if (!board)
+		return;
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+			putchar(board[y][x]);
+		putchar('\n');
+	}
 }
 
-char** board_creation(int width, int height)
+char	**board_creation(int width, int height)
 {
-    char **empty_board = (char **)calloc(height + 1, sizeof(char *));
-    int index = 0;
-    for (int array = 0; array < height; array++)
-    {
-        index = 0;
-        empty_board[array] = (char *)calloc(width + 1, sizeof(char));
-        while (index < width)
-        {
-            empty_board[array][index] = ' ';
-            index++;
-        }
-        empty_board[array][index] = '\0';
-    }
-    empty_board[height] = NULL;
-    return(empty_board);
+	char	**board;
+
+	board = calloc((size_t)height, sizeof *board);
+	if (!board)
+		return NULL;
+
+	for (int y = 0; y < height; y++)
+	{
+		board[y] = calloc((size_t)width + 1, sizeof **board);
+		if (!board[y])
+		{
+			free_board(board, y);
+			return NULL;
+		}
+		for (int x = 0; x < width; x++)
+			board[y][x] = ' ';
+		board[y][width] = '\0';
+	}
+	return board;
 }
 
-char **add_livingcells(int width, int height)
+char	**add_livingcells(int width, int height)
 {
-    int index = 0;
-    int array = 0;
-    char buffer;
-    char **board = board_creation(width, height);
-    bool drawing_status = false;
+	char	buf;
+	int		x = 0;
+	int		y = 0;
+	bool	drawing = false;
+	char	**board = board_creation(width, height);
 
-    while (read(0, &buffer, 1) > 0)
-    {
-        if (buffer == 'x')
-            drawing_status = !drawing_status;
-        else if (buffer == 'w' && array - 1 >= 0)
-            array--;
-        else if (buffer == 'a' && index - 1 >= 0)
-            index--;
-        else if (buffer == 's' && array + 1 < height)
-            array++;
-        else if (buffer == 'd' && index + 1 < width)
-            index++;
-        if (drawing_status == true)
-            board[array][index] = '0';
-    }
-    return(board);
+	if (!board)
+		return NULL;
+
+	while (read(0, &buf, 1) > 0)
+	{
+		if (buf == 'x')
+			drawing = !drawing;
+		else if (buf == 'w' && y > 0)
+			y--;
+		else if (buf == 'a' && x > 0)
+			x--;
+		else if (buf == 's' && y + 1 < height)
+			y++;
+		else if (buf == 'd' && x + 1 < width)
+			x++;
+
+		if (drawing)
+			board[y][x] = '0';
+	}
+	return board;
 }
 
-char** update_board(char **board, int width, int height)
+char	**update_board(char **board, int width, int height)
 {
-    char** updated_board = board_creation(width, height);
-    if (!updated_board)
-        return(NULL);
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            int n = 0;
-            for (int dy = -1; dy <= 1; dy++)
-            {
-                for (int dx = -1; dy <= 1; dy++)
-                {
-                    if (dx == 0 && dy == 0)
-                        continue;
-                    int nx = x + dx;
-                    int ny = y + dy;
+	char	**updated = board_creation(width, height);
+	if (!updated)
+		return board;  // keep old board if allocation fails
 
-                    if (nx >= 0 && nx < width && ny >= 0 && ny < height)
-                    {
-                        if (board[ny][nx] == '0')
-                            n++;
-                    }
-                }
-            }
-            if (board[y][x] == '0')
-            {
-                if (n == 3 || n == 2)
-                    updated_board[y][x] = '0';
-            }
-            else
-            {
-                if (n == 3)
-                    updated_board[y][x] = '0';
-            }
-        }
-    }
-    free(board);
-    return(updated_board);
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int n = 0;
+
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				for (int dx = -1; dx <= 1; dx++)
+				{
+					if (dx == 0 && dy == 0)
+						continue;
+
+					int ny = y + dy;
+					int nx = x + dx;
+
+					if (nx >= 0 && nx < width &&
+						ny >= 0 && ny < height &&
+						board[ny][nx] == '0')
+						n++;
+				}
+			}
+
+			if (board[y][x] == '0')
+			{
+				if (n == 2 || n == 3)
+					updated[y][x] = '0';
+			}
+			else
+			{
+				if (n == 3)
+					updated[y][x] = '0';
+			}
+		}
+	}
+
+	free_board(board, height);
+	return updated;
 }
 
-void game_of_life(int width, int height, int iteration)
+void	game_of_life(int width, int height, int iteration)
 {
-    char **new_board;
-    new_board = add_livingcells(width, height);
-    while (iteration--)
-        update_board(new_board, width, height);
-    print_board(new_board, width, height);
-    free_board(new_board, height);
+	char	**board;
+
+	board = add_livingcells(width, height);
+	if (!board)
+		return;
+
+	while (iteration--)
+		board = update_board(board, width, height);
+
+	print_board(board, width, height);
+	free_board(board, height);
 }
