@@ -31,7 +31,10 @@ size_t ft_strlen(const char *s)
 	return (i);
 }
 
-int ft_isdigit(int c) { return c >= '0' && c <= '9'; }
+int ft_isdigit(int c)
+{
+	return c >= '0' && c <= '9';
+}
 
 long ft_atoi(const char *s)
 {

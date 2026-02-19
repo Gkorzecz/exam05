@@ -18,7 +18,7 @@ static int parse_header(char *line, t_map *map)
     map->empty    = line[len - 3];
     line[len - 3] = '\0';
 
-	if (!is_print(map->obstacle) || is_print(map->full) || is_print(map->empty))
+	if (!is_print(map->obstacle) || !is_print(map->full) || !is_print(map->empty))
     	return (0);
 
     map->rows = (int)ft_atoi(line);
@@ -47,59 +47,63 @@ static int store_line(t_map *map, char *line, int idx)
 
 int read_map(FILE *fp, t_map *map)
 {
-    char   *line = NULL;
-    size_t  cap  = 0;
-    ssize_t n;
+	char   *line = NULL;
+	size_t  cap  = 0;
+	ssize_t n;
 
-    /* ─── 1. read & validate header ───────────────────────────────────────── */
-    n = getline(&line, &cap, fp);
-    if (n <= 0)                         /* I/O error or empty file */
-        return (0);
+	/* ─── 1. read & validate header ───────────────────────── */
+	n = getline(&line, &cap, fp);
+	if (n <= 0 || line[n - 1] != '\n')
+	{
+		free(line);
+		return (0);
+	}
 
-    if (!parse_header(line, map))
-    {     /* bad header → map error  */
-        free(line);
-        return (0);
-    }
+	if (!parse_header(line, map))
+	{
+		free(line);
+		return (0);
+	}
 
-    free(line);                         /* free header buffer      */
-    line = NULL;
-    cap  = 0;                           /* force getline to malloc */
+	free(line);
+	line = NULL;
+	cap  = 0;
 
-    /* ─── 2. allocate grid pointers ──────────────────────────────────────── */
-    if (!safe_alloc((void **)&map->grid, sizeof(char *) * map->rows))
-        return (0);                       /* calloc failed           */
+	/* ─── 2. allocate grid ─────────────────────────────────── */
+	if (!safe_alloc((void **)&map->grid, sizeof(char *) * map->rows))
+		return (0);
 
-    /* ─── 3. read each data row ──────────────────────────────────────────── */
-    for (int i = 0; i < map->rows; ++i)
-    {
-        n = getline(&line, &cap, fp);
-        if (n <= 0)
-        {                   /* premature EOF */
-            free_map(map);
-            free(line);
-            return (0);
-        }
-        if (line[n - 1] == '\n')        /* drop trailing newline   */
-            line[--n] = '\0';
+	/* ─── 3. read rows ─────────────────────────────────────── */
+	for (int i = 0; i < map->rows; ++i)
+	{
+		n = getline(&line, &cap, fp);
+		if (n <= 0 || line[n - 1] != '\n')   /* ← enforce newline */
+		{
+			free_map(map);
+			free(line);
+			return (0);
+		}
 
-        if (!store_line(map, line, i))
-        {/* width / char check      */
-            free_map(map);
-            free(line);
-            return (0);
-        }
-        /* ownership of `line` transferred to map->grid[i] */
-        line = NULL;                    /* ensure new malloc next loop */
-        cap  = 0;
-    }
+		line[--n] = '\0';                    /* strip newline */
 
-    /* ─── 4. ensure no extra garbage after the map ───────────────────────── */
-    int c = fgetc(fp);
-    if (c != EOF && c != '\n')
-    {
-        free_map(map);
-        return (0);
-    }
-    return (1);                           /* success */
+		if (!store_line(map, line, i))
+		{
+			free_map(map);
+			free(line);
+			return (0);
+		}
+
+		line = NULL;   /* ownership transferred */
+		cap  = 0;
+	}
+
+	/* ─── 4. ensure no garbage after map ───────────────────── */
+	int c = fgetc(fp);
+	if (c != EOF && c != '\n')
+	{
+		free_map(map);
+		return (0);
+	}
+
+	return (1);
 }
