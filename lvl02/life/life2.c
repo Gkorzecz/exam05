@@ -82,7 +82,7 @@ char	**update_board(char **board, int width, int height)
 {
 	char	**updated = board_creation(width, height);
 	if (!updated)
-		return board;  // keep old board if allocation fails
+		return board;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -100,9 +100,7 @@ char	**update_board(char **board, int width, int height)
 					int ny = y + dy;
 					int nx = x + dx;
 
-					if (nx >= 0 && nx < width &&
-						ny >= 0 && ny < height &&
-						board[ny][nx] == '0')
+					if (nx >= 0 && nx < width && ny >= 0 && ny < height && board[ny][nx] == '0')
 						n++;
 				}
 			}
