@@ -10,23 +10,25 @@ void free_map(t_map *map)
 	map->grid = NULL;
 }
 
-// int is_print(char c)
-// {
-
-// }
+int is_print(char c)
+{
+	if (c >= 32 && c <= 126)
+		return (1);
+	return (0);
+}
 
 int map_error(void)
 {
-	fputs("map error\n", stderr);
-	return 1;
+	fputs("Error: invalid map\n", stderr);
+	return (1);
 }
 
 size_t ft_strlen(const char *s)
 {
 	size_t i = 0;
 	while (s && s[i])
-		++i;
-	return i;
+		i++;
+	return (i);
 }
 
 int ft_isdigit(int c) { return c >= '0' && c <= '9'; }
@@ -39,7 +41,7 @@ long ft_atoi(const char *s)
 		n = n * 10 + (*s - '0');
 		++s;
 	}
-	return n;
+	return (n);
 }
 
 int ft_min3(int a, int b, int c)

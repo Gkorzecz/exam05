@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 		status = process_stream(stdin);
 	else
 	{
-		for (int i = 1; i < argc; ++i)
+		for (int i = 1; i < argc; i++)
 		{
 			FILE *fp = fopen(argv[i], "r");
 			if (!fp)
@@ -38,5 +38,5 @@ int main(int argc, char **argv)
 				fputc('\n', stdout);
 		}
 	}
-	return status;
+	return (status);
 }

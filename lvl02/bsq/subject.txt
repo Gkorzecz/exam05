@@ -27,7 +27,7 @@ Definition of a valid map :
 - The map is invalid if a character is missing from the first line, or if two characters (of empty, full
 and obstacle) are identical.
 - The characters can be any printable character, even numbers.
-- In case of an invalid map, your program should display "map error" on the error output followed
+- In case of an invalid map, your program should display "Error: invalid map" on the error output followed
 by a line break. Your program will then move on to the next map.
 example:
 %>cat example_file

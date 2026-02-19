@@ -6,12 +6,12 @@
 
 typedef struct s_map
 {
-	int   rows;
-	int   cols;
-	char  empty;
-	char  obstacle;
-	char  full;
-	char **grid;
+	int		rows;
+	int		cols;
+	char	empty;
+	char	obstacle;
+	char	full;
+	char	**grid;
 }	t_map;
 
 /* parse.c */
@@ -29,6 +29,6 @@ int		ft_isdigit(int c);
 long	ft_atoi(const char *s);
 int		ft_min3(int a, int b, int c);
 int		safe_alloc(void **p, size_t sz);
-// int		is_print(char c);
+int		is_print(char c);
 
 #endif
